@@ -1,5 +1,5 @@
 # Ansible
-Playbooks that run in a test environment</br>
+Playbooks that run in a test docker environment</br>
 
 To run this test environment</br>
 (1) Install Docker</br>
