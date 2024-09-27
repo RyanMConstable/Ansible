@@ -1,12 +1,12 @@
 # Ansible
-Playbooks that run in a test environment\n
+Playbooks that run in a test environment</br>
 
-To run this test environment\n
-(1) Install Docker\n
-(2) Run the dockerfile.ansiblehost\n
-        'docker build -t ansible-host -f dockerfile.ansiblehost .'\n
-(3) Run the dockerfile.ansibleclient\n
-        'docker build -t ansible-client -f dockerfile.ansibleclient .'\n
-(4) Run the command 'Docker Compose Up'\n
-(5) Enter the ansible host and use ansible\n
-        'docker exec -it ansible bash'\n
+To run this test environment</br>
+(1) Install Docker</br>
+(2) Run the dockerfile.ansiblehost</br>
+        'docker build -t ansible-host -f dockerfile.ansiblehost .'</br>
+(3) Run the dockerfile.ansibleclient</br>
+        'docker build -t ansible-client -f dockerfile.ansibleclient .'</br>
+(4) Run the command 'Docker Compose Up'</br>
+(5) Enter the ansible host and use ansible</br>
+        'docker exec -it ansible bash'</br>
