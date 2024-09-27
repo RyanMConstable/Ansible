@@ -1,0 +1,4 @@
+FROM ubuntu:latest
+RUN apt-get update && apt-get install -y ansible openssh-client vim
+COPY ./.ssh /root/.ssh
+CMD ["tail", "-f", "/dev/null"]

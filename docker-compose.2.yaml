@@ -1,0 +1,8 @@
+services:
+  host:
+    hostname: envtest
+    container_name: envtest
+    image: ubuntu
+    env_file:
+      - .env
+    command: tail -f /dev/null

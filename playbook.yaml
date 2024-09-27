@@ -1,0 +1,137 @@
+- name: My first play
+  hosts: all
+  tasks:
+   - name: Ping my hosts
+     ansible.builtin.ping:
+
+- name: SSH key gen play
+  hosts: host
+  tasks:
+  - name: Generate new ssh key
+    ansible.builtin.user:
+      name: root
+      generate_ssh_key: yes
+      ssh_key_bits: 2048
+      ssh_key_file: /root/.ssh/new_rsa
+      force: yes
+
+- name: Modify file play
+  hosts: all
+  tasks:
+  - name: Edit line in .bashrc file
+    ansible.builtin.lineinfile:
+      path: /root/.bashrc
+      regexp: '#force_color_prompt=yes'
+      line: 'force_color_prompt=yes'
+    when: ansible_facts['distribution'] == "Ubuntu"
+
+- name: Add users to host and generate keys
+  hosts: host
+  tasks:
+  - name: Create the helpdesk user
+    ansible.builtin.user:
+      name: helpdesk
+      create_home: yes
+      generate_ssh_key: yes
+      ssh_key_bits: 2048
+      ssh_key_file: /home/helpdesk/.ssh/id_rsa
+
+  - name: Create the webserver user
+    ansible.builtin.user:
+      name: webserver
+      create_home: yes
+      generate_ssh_key: yes
+      ssh_key_bits: 2048
+      ssh_key_file: /home/webserver/.ssh/id_rsa
+
+  - name: Create the epc user
+    ansible.builtin.user:
+      name: epc
+      groups: root
+      shell: /bin/bash
+      create_home: yes
+      generate_ssh_key: yes
+      ssh_key_bits: 2048
+      ssh_key_file: /home/epc/.ssh/id_rsa
+
+- name: Add users to clients
+  hosts: clients 
+  tasks:
+  - name: Create the helpdesk user
+    ansible.builtin.user:
+      name: helpdesk
+      password: $6$IdPYmHlshLk3NRdG$nYbZZJpO4T655kIjMQvLw9knjR3.MC9wrEAipt70q4460mmjUbJsEXwgfVipLY0k24bs.hWoLAdr/zyeYj5Vc0
+      create_home: yes
+
+  - name: Create the webserver user
+    ansible.builtin.user:
+      name: webserver
+      password: $6$IdPYmHlshLk3NRdG$nYbZZJpO4T655kIjMQvLw9knjR3.MC9wrEAipt70q4460mmjUbJsEXwgfVipLY0k24bs.hWoLAdr/zyeYj5Vc0
+      create_home: yes
+
+  - name: Create the epc user
+    ansible.builtin.user:
+      name: epc
+      password: $6$IdPYmHlshLk3NRdG$nYbZZJpO4T655kIjMQvLw9knjR3.MC9wrEAipt70q4460mmjUbJsEXwgfVipLY0k24bs.hWoLAdr/zyeYj5Vc0
+      groups: root
+      shell: /bin/bash
+
+#.ssh should be 700
+#authorized_keys should be 600
+
+- name: Make a .ssh directory for helpdesk, webserver, epc
+  hosts: clients
+  tasks:
+  - name: Create .ssh directory for helpdesk user
+    ansible.builtin.file:
+      path: /home/helpdesk/.ssh/
+      state: directory
+      owner: helpdesk
+      group: helpdesk
+      mode: '0700'
+
+  - name: Create .ssh directory for webserver user
+    ansible.builtin.file:
+      path: /home/webserver/.ssh/
+      state: directory
+      owner: webserver
+      group: webserver
+      mode: '0700'
+
+  - name: Create .ssh directory for epc user
+    ansible.builtin.file:
+      path: /home/epc/.ssh/
+      state: directory
+      owner: epc
+      group: epc
+      mode: '0700'
+
+- name: Copy files
+  hosts: clients
+  tasks:
+    - name: Copy helpdesk public key
+      ansible.builtin.copy:
+        src: /home/helpdesk/.ssh/id_rsa.pub
+        dest: /home/helpdesk/.ssh/authorized_keys
+        mode: '0600'
+        owner: helpdesk
+        group: helpdesk
+        remote_src: no
+
+    - name: Copy webserver public key 
+      ansible.builtin.copy:
+        src: /home/webserver/.ssh/id_rsa.pub
+        dest: /home/webserver/.ssh/authorized_keys
+        mode: '0600'
+        owner: webserver
+        group: webserver
+        remote_src: no
+          
+    - name: Copy epc public key
+      ansible.builtin.copy:
+        src: /home/epc/.ssh/id_rsa.pub
+        dest: /home/epc/.ssh/authorized_keys
+        mode: '0600'
+        owner: epc
+        group: epc 
+        remote_src: no
