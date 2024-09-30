@@ -1,6 +1,8 @@
 # Ansible
 Playbooks that run in a test docker environment</br>
 
+The .ssh is specifically so the containers can contact one another
+
 To run this test environment</br>
 (1) Install Docker</br>
 (2) Run the dockerfile.ansiblehost</br>
