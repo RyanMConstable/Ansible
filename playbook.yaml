@@ -54,6 +54,16 @@
       ssh_key_bits: 2048
       ssh_key_file: /home/epc/.ssh/id_rsa
 
+  - name: Create the custom user
+    ansible.builtin.user:
+      name: "{{ lookup('env', 'TEST') }}"
+      groups: root
+      shell: /bin/bash
+      create_home: yes
+      generate_ssh_key: yes
+      ssh_key_bits: 2048
+      ssh_key_file: /home/{{ lookup('env', 'TEST') }}/.ssh/id_rsa
+
 - name: Add users to clients
   hosts: clients 
   tasks:
@@ -74,6 +84,12 @@
       name: epc
       password: $6$IdPYmHlshLk3NRdG$nYbZZJpO4T655kIjMQvLw9knjR3.MC9wrEAipt70q4460mmjUbJsEXwgfVipLY0k24bs.hWoLAdr/zyeYj5Vc0
       groups: root
+      shell: /bin/bash
+
+  - name: Create the custom user
+    ansible.builtin.user:
+      name: "{{ lookup( 'env', 'TEST') }}"
+      password: $6$IdPYmHlshLk3NRdG$nYbZZJpO4T655kIjMQvLw9knjR3.MC9wrEAipt70q4460mmjUbJsEXwgfVipLY0k24bs.hWoLAdr/zyeYj5Vc0
       shell: /bin/bash
 
 #.ssh should be 700
@@ -106,6 +122,14 @@
       group: epc
       mode: '0700'
 
+  - name: Create .ssh directory for a given user with the TEST env variable
+    ansible.builtin.file:
+      path: /home/{{ lookup('env', 'TEST') }}/.ssh/
+      state: directory
+      owner: "{{ lookup('env', 'TEST') }}"
+      group: "{{ lookup('env', 'TEST') }}"
+      mode: '0701'
+
 - name: Copy files
   hosts: clients
   tasks:
@@ -131,6 +155,15 @@
       ansible.builtin.copy:
         src: /home/epc/.ssh/id_rsa.pub
         dest: /home/epc/.ssh/authorized_keys
+        mode: '0600'
+        owner: epc
+        group: epc 
+        remote_src: no
+
+    - name: Copy custom public key
+      ansible.builtin.copy:
+        src: /home/{{ lookup('env', 'TEST') }}/.ssh/id_rsa.pub
+        dest: /home/{{ lookup('env', 'TEST') }}/.ssh/authorized_keys
         mode: '0600'
         owner: epc
         group: epc 

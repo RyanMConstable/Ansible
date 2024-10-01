@@ -39,6 +39,15 @@ services:
     networks:
       - ansible-network
     command: /bin/bash -c "service ssh start && tail -f /dev/null"
+
+  client5:
+    hostname: ubuntuDocker
+    container_name: ubuntuDocker
+    image: dind
+    networks:
+      - ansible-network
+    command: /bin/bash -c "service ssh start && tail -f /dev/null"
+
 networks:
   ansible-network:
     driver: bridge
