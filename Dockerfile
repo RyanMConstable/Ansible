@@ -7,4 +7,5 @@ RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/doc
 RUN apt-get update
 RUN apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 COPY ./.ssh/id_rsa.pub /root/.ssh/authorized_keys
+COPY ./etcdockerfile /etc/init.d/docker
 CMD ["tail", "-f", "/dev/null"]
