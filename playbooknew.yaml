@@ -1,0 +1,35 @@
+- hosts: ubuntu1
+  tasks:
+    - name: Find directories
+      ansible.builtin.find:
+        paths: /home/
+        file_type: directory
+      register: directories
+        #    - debug: msg="{{directories}}"
+
+    - name: Find key files
+      ansible.builtin.find:
+        paths: "{{ item['path'] }}/.ssh/"
+        patterns: "id_rsa.pub"
+      with_items:
+        -  "{{ directories['files'] }}"
+          #register: keys
+        #- debug: msg="{{keys}}"
+
+    - name: Testing set facts
+      ansible.builtin.shell:
+        cmd : echo "{{ directories['files'][:]|join('') }}"
+          #register: test
+          #- debug: msg="{{test}}"
+
+#Dumb this down, find one file first
+- hosts: ubuntu1
+  tasks:
+    - name: Find the .ssh directory
+      ansible.builtin.find: 
+        paths: /home
+        recurse: yes
+        patterns: "*/.ssh/id_rsa.pub"
+      register: pubkeys
+    - debug: msg="{{pubkeys}}"
+      

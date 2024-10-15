@@ -1,0 +1,29 @@
+services:
+  host:
+    hostname: ansible
+    container_name: ansible
+    image: ansible-host
+    networks:
+      - ansible-network
+    volumes:
+      - ./:/mnt
+
+  client:
+    hostname: jump
+    container_name: jump
+    image: ansible-client
+    networks:
+      - ansible-network
+    command: /bin/bash -c "service ssh start && tail -f /dev/null"
+
+  client2:
+    hostname: drive
+    container_name: drive
+    image: ansible-client
+    networks:
+      - ansible-network
+    command: /bin/bash -c "service ssh start && tail -f /dev/null"
+
+networks:
+  ansible-network:
+    driver: bridge

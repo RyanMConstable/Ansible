@@ -1,5 +1,5 @@
 FROM ubuntu:latest
-RUN apt-get update && apt-get install -y ansible openssh-server vim ca-certificates curl
+RUN apt-get update && apt-get install -y openssh-server vim ca-certificates curl
 RUN install -m 0755 -d /etc/apt/keyrings 
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 RUN chmod a+r /etc/apt/keyrings/docker.asc

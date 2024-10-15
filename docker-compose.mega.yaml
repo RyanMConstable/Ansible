@@ -46,11 +46,41 @@ services:
     image: dind
     ports:
       - "22:22"
-      - "80:80"
+        #      - "80:80"
     networks:
       - ansible-network
     privileged: true
     command: /bin/bash -c "service ssh start && dockerd && tail -f /dev/null"
+      
+  nginxlb:
+    hostname: nginxlb
+    container_name: nginxlb
+    image: nginx
+    networks:
+      - ansible-network
+    ports:
+      - "80:80"
+
+  nginx1:
+    hostname: nginx1
+    container_name: nginx1
+    image: nginx
+    networks:
+      - ansible-network
+
+  nginx2:
+    hostname: nginx2
+    container_name: nginx2
+    image: nginx
+    networks:
+      - ansible-network
+    
+  nginx3:
+    hostname: nginx3
+    container_name: nginx3
+    image: nginx
+    networks:
+      - ansible-network
 
 networks:
   ansible-network:

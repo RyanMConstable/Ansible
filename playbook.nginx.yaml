@@ -1,0 +1,15 @@
+---
+#1) Change nginxlb file to pass to other nginx files
+#2) Update html on nginx2
+#3) Update html on nginx3
+
+- name: Setup NGinX load balancer and NGinX servers
+  hosts: nginxlb
+  tasks:
+    - name: Put index file on nginx server 2
+      ansible.builtin.copy:
+        src: /mnt/nginxhtml/index1.html
+        dest: /usr/share/nginx/html/index.html
+    - name: Reload nginx
+      ansible.builtin.shell:
+        cmd: nginx -s reload

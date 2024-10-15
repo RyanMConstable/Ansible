@@ -1,6 +1,17 @@
+#nginxlb
+#nginx1
+#nginx2
+#nginx3
+#jump.epc-instore.com
+
 [clients]
-ubuntu[1:4]
-ubuntuDocker
+jump
+drive
+#ubuntuDocker
 
 [host]
 ansible ansible_connection=local
+
+#[lb]
+#lb-dmz ansible_host=10.70.1.10
+

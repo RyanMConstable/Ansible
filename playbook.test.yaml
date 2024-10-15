@@ -1,0 +1,21 @@
+- name: Test ping
+  hosts: all
+  tasks:
+    - name: Ping
+      ansible.builtin.ping:
+
+
+
+- name: Modify file play
+  hosts: jump
+  tasks:
+  - name: Create the custom user
+    ansible.builtin.user:
+      name: "{{ lookup('env', 'USER') }}"
+      groups: root
+      shell: /bin/bash
+      create_home: yes
+      generate_ssh_key: yes
+      ssh_key_bits: 2048
+      ssh_key_file: /home/{{ lookup('env', 'USER') }}/.ssh/id_rsa
+

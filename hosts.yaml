@@ -1,0 +1,10 @@
+servers:
+  clients:
+    ubuntu1:
+    ubuntu2:
+    ubuntu3:
+    ubuntu4:
+    ubuntuDocker:
+
+  host:
+    ansible:

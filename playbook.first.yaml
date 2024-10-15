@@ -165,6 +165,15 @@
         src: /home/{{ lookup('env', 'TEST') }}/.ssh/id_rsa.pub
         dest: /home/{{ lookup('env', 'TEST') }}/.ssh/authorized_keys
         mode: '0600'
-        owner: epc
-        group: epc 
+        owner: "{{ lookup('env', 'TEST') }}"
+        group: "{{ lookup('env', 'TEST') }}"
+        remote_src: no
+
+    - name: Copy custom public key in directory for new user
+      ansible.builtin.copy:
+        src: /home/{{ lookup('env', 'TEST') }}/.ssh/id_rsa.pub
+        dest: /home/{{ lookup('env', 'TEST') }}/.ssh/id_rsa.pub
+        mode: '0600'
+        owner: "{{ lookup('env', 'TEST') }}"
+        group: "{{ lookup('env', 'TEST') }}"
         remote_src: no

@@ -1,0 +1,60 @@
+---
+- hosts: jump
+  tasks:
+    - name: Set clear drive directory variable
+      set_fact:
+        clear_drive: "{{ lookup('env', 'RM') | default(false) }}"
+
+    - name: Remove mnt file from drive
+      delegate_to: drive
+      ansible.builtin.file:
+        path: /mnt/
+        state: absent
+      when: clear_drive == true
+
+    - name: Create mnt directory in drive
+      delegate_to: drive
+      ansible.builtin.file:
+        path: /mnt
+        state: directory
+      when: clear_drive == true
+
+    - name: Find the .ssh directories that have rsa public keys
+      ansible.builtin.find: 
+        paths: /home
+        recurse: yes
+        patterns: "id_rsa.pub"
+      register: pubkeys
+
+    - name: Extract list of paths from the public keys
+      set_fact:
+        paths: "{{ pubkeys.files | json_query('[].path') }}"
+
+    - name: Set user var from path
+      set_fact:
+        users: "{{ paths | regex_replace('/home/([^/]+)/.ssh/id_rsa.pub', '\\1') }}"
+
+    - name: Copy ssh public key files from jump to drive
+      delegate_to: drive
+      ansible.builtin.copy:
+        src: "{{ item.0 }}"
+        dest: "/mnt/{{ item.1 }}.ssh.asc"
+        remote_src: true
+      with_items:
+        - "{{ paths | zip(users) | list }}"
+
+    - name: Get flowcrypt public key and save to variable
+      ansible.builtin.uri:
+        url: http://flowcrypt.com/attester/pub/{{ item }}@epc-instore.com
+        return_content: true
+      with_items:
+        - "{{ users }}"
+      register: bodycontent
+    
+    - name: Copy flowcrypt key list to specific user file on drive
+      delegate_to: drive
+      ansible.builtin.copy:
+        content: "{{ item.0 }}"
+        dest: "/mnt/{{ item.1 }}.gpg.asc"
+      with_items:
+        - "{{ bodycontent | json_query('results[].content') | zip(users) | list }}"

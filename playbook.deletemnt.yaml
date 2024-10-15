@@ -1,0 +1,16 @@
+---
+- hosts: drive
+  tasks:
+
+    - name: Remove mnt file from drive
+      delegate_to: drive
+      ansible.builtin.file:
+        path: /mnt/
+        state: absent
+
+    - name: Create mnt directory on drive
+      delegate_to: drive
+      ansible.builtin.file:
+        path: /mnt
+        state: directory
+
