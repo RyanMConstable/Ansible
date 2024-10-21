@@ -1,24 +1,11 @@
 ---
-- hosts: jump
+- name: Copy users from jump to drive
+  hosts: jump
   tasks:
-    - name: Set clear drive directory variable
-      set_fact:
-        clear_drive: "{{ lookup('env', 'RM') | default(false) }}"
-
-    - name: Remove mnt file from drive
-      delegate_to: drive
-      ansible.builtin.file:
-        path: /mnt/
-        state: absent
-      when: clear_drive == true
-
-    - name: Create mnt directory in drive
-      delegate_to: drive
-      ansible.builtin.file:
-        path: /mnt
-        state: directory
-      when: clear_drive == true
-
+    - name: Run the clear mount role to wipe the mnt test 
+      ansible.builtin.import_role:
+        name: rmmnt
+          
     - name: Find the .ssh directories that have rsa public keys
       ansible.builtin.find: 
         paths: /home

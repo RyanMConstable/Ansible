@@ -11,9 +11,6 @@
       ssh_key_bits: 2048
       ssh_key_file: /home/{{ lookup('env', 'USER') }}/.ssh/id_rsa
 
-- name: Add users to clients
-  hosts: clients 
-  tasks:
   - name: Create the custom user
     ansible.builtin.user:
       name: "{{ lookup( 'env', 'USER') }}"
@@ -23,9 +20,6 @@
 #.ssh should be 700
 #authorized_keys should be 600
 
-- name: Make a .ssh directory for helpdesk, webserver, epc
-  hosts: clients
-  tasks:
   - name: Create .ssh directory for a given user with the USER env variable
     ansible.builtin.file:
       path: /home/{{ lookup('env', 'USER') }}/.ssh/
@@ -34,23 +28,20 @@
       group: "{{ lookup('env', 'USER') }}"
       mode: '0701'
 
-- name: Copy files
-  hosts: clients
-  tasks:
-    - name: Copy custom public key
-      ansible.builtin.copy:
-        src: /root/.ssh/id_rsa.pub
-        dest: /home/{{ lookup('env', 'USER') }}/.ssh/authorized_keys
-        mode: '0600'
-        owner: "{{ lookup('env', 'USER') }}"
-        group: "{{ lookup('env', 'USER') }}"
-        remote_src: no
+  - name: Copy custom public key
+    ansible.builtin.copy:
+      src: /root/.ssh/id_rsa.pub
+      dest: /home/{{ lookup('env', 'USER') }}/.ssh/authorized_keys
+      mode: '0600'
+      owner: "{{ lookup('env', 'USER') }}"
+      group: "{{ lookup('env', 'USER') }}"
+      remote_src: no
 
-    - name: Copy custom public key in directory for new user
-      ansible.builtin.copy:
-        src: /root/.ssh/id_rsa.pub
-        dest: /home/{{ lookup('env', 'USER') }}/.ssh/id_rsa.pub
-        mode: '0600'
-        owner: "{{ lookup('env', 'USER') }}"
-        group: "{{ lookup('env', 'USER') }}"
-        remote_src: no
+  - name: Copy custom public key in directory for new user
+    ansible.builtin.copy:
+      src: /root/.ssh/id_rsa.pub
+      dest: /home/{{ lookup('env', 'USER') }}/.ssh/id_rsa.pub
+      mode: '0600'
+      owner: "{{ lookup('env', 'USER') }}"
+      group: "{{ lookup('env', 'USER') }}"
+      remote_src: no
