@@ -2,14 +2,50 @@
 #1) Change nginxlb file to pass to other nginx files
 #2) Update html on nginx2
 #3) Update html on nginx3
-
-- name: Setup NGinX load balancer and NGinX servers
+- name: Change nginxlb default.conf
   hosts: nginxlb
   tasks:
-    - name: Put index file on nginx server 2
+    - name: Make nginxlb a load balancer
       ansible.builtin.copy:
-        src: /mnt/nginxhtml/index1.html
-        dest: /usr/share/nginx/html/index.html
+        src: /mnt/lbconf
+        dest: /etc/nginx/conf.d/default.conf
+          
     - name: Reload nginx
       ansible.builtin.shell:
-        cmd: nginx -s reload
+        cmd: "nginx -s reload"
+
+- name: Change nginx1 html
+  hosts: nginx1
+  tasks:
+    - name: Set nginx1 var
+      set_fact:
+        nginx1: "{{ lookup('env', 'NGINX1') }}"
+
+    - name: Change nginx1 html content
+      ansible.builtin.copy:
+        content: "{{ nginx1 }}"
+        dest: /usr/share/nginx/html/index.html
+
+- name: Change nginx2 html
+  hosts: nginx2
+  tasks:
+    - name: Set nginx2 var
+      set_fact:
+        nginx2: "{{ lookup('env', 'NGINX2') }}"
+
+    - name: Change nginx2 html content
+      ansible.builtin.copy:
+        content: "{{ nginx2 }}"
+        dest: /usr/share/nginx/html/index.html
+
+- name: Change nginx3 html
+  hosts: nginx3
+  tasks:
+    - name: Set nginx3 var
+      set_fact:
+        nginx3: "{{ lookup('env', 'NGINX3') }}"
+
+    - name: Change nginx3 html content
+      ansible.builtin.copy:
+        content: "{{ nginx3 }}"
+        dest: /usr/share/nginx/html/index.html

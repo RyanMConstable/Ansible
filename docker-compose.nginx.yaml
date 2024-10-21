@@ -1,0 +1,47 @@
+services:
+  host:
+    hostname: ansible
+    container_name: ansible
+    image: ansible-host
+    networks:
+      - ansible-network
+    volumes:
+      - ./:/mnt
+
+  nginxlb:
+    hostname: nginxlb
+    container_name: nginxlb
+    image: nginxssh
+    networks:
+      - ansible-network
+    ports:
+      - "80:80"
+    command: /bin/bash -c "service ssh start && nginx && tail -f /dev/null"
+
+  nginx1:
+    hostname: nginx1
+    container_name: nginx1
+    image: nginxssh
+    networks:
+      - ansible-network
+    command: /bin/bash -c "service ssh start && nginx && tail -f /dev/null"
+
+  nginx2:
+    hostname: nginx2
+    container_name: nginx2
+    image: nginxssh
+    networks:
+      - ansible-network
+    command: /bin/bash -c "service ssh start && nginx && tail -f /dev/null"
+    
+  nginx3:
+    hostname: nginx3
+    container_name: nginx3
+    image: nginxssh
+    networks:
+      - ansible-network
+    command: /bin/bash -c "service ssh start && nginx && tail -f /dev/null"
+
+networks:
+  ansible-network:
+    driver: bridge

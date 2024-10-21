@@ -1,0 +1,4 @@
+FROM nginx:latest
+RUN apt-get update && apt-get install -y ansible openssh-server
+COPY ./.ssh/id_rsa.pub /root/.ssh/authorized_keys
+CMD ["tail", "-f", "/dev/null"]
