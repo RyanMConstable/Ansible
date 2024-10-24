@@ -19,7 +19,7 @@
   tasks:
     - name: Set nginx1 var
       set_fact:
-        nginx1: "{{ lookup('env', 'NGINX1') }}"
+        nginx1: "{{ lookup('env', 'NGINX1') | default('This is nginx1!', true) }}"
 
     - name: Change nginx1 html content
       ansible.builtin.copy:
@@ -31,7 +31,7 @@
   tasks:
     - name: Set nginx2 var
       set_fact:
-        nginx2: "{{ lookup('env', 'NGINX2') }}"
+        nginx2: "{{ lookup('env', 'NGINX2') | default('This is nginx2!', true) }}"
 
     - name: Change nginx2 html content
       ansible.builtin.copy:
@@ -43,7 +43,7 @@
   tasks:
     - name: Set nginx3 var
       set_fact:
-        nginx3: "{{ lookup('env', 'NGINX3') }}"
+        nginx3: "{{ lookup('env', 'NGINX3') | default('This is nginx3!', true) }}"
 
     - name: Change nginx3 html content
       ansible.builtin.copy:

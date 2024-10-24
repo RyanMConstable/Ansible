@@ -1,0 +1,6 @@
+[clients]
+jump
+drive
+
+[host]
+ansible ansible_connection=local

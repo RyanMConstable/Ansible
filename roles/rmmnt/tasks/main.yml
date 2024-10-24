@@ -1,18 +1,18 @@
 ---
-- name: Set clear drive directory variable
+- name: Check RM environment variable and set clear_drive
   set_fact:
     clear_drive: "{{ lookup('env', 'RM') | default(false) }}"
 
 - name: Remove mnt file from drive if clear_drive
   delegate_to: drive
   ansible.builtin.file:
-    path: /mnt/
+    path: "{{ destination }}/"
     state: absent
   when: clear_drive == true
 
 - name: Create mnt directory in drive if clear_drive
   delegate_to: drive
   ansible.builtin.file:
-    path: /mnt
+    path: "{{ destination }}"
     state: directory
   when: clear_drive == true

@@ -1,23 +1,27 @@
 ---
-- name: Copy users from jump to drive
+- name: Copy users keys from jump to drive
   hosts: jump
   tasks:
+    - name: Set destination variable using DEST env variable
+      set_fact:
+        destination: "{{ lookup('env', 'DEST') | default('/tmp', true) }}"
+
     - name: Run the clear mount role to wipe the mnt test 
       ansible.builtin.import_role:
         name: rmmnt
-          
-    - name: Find the .ssh directories that have rsa public keys
+
+    - name: Find the .ssh files that have rsa public keys
       ansible.builtin.find: 
         paths: /home
         recurse: yes
         patterns: "id_rsa.pub"
       register: pubkeys
 
-    - name: Extract list of paths from the public keys
+    - name: Extract list of paths from the pubkeys output
       set_fact:
         paths: "{{ pubkeys.files | json_query('[].path') }}"
 
-    - name: Set user var from path
+    - name: Make a list of users from the files
       set_fact:
         users: "{{ paths | regex_replace('/home/([^/]+)/.ssh/id_rsa.pub', '\\1') }}"
 
@@ -25,7 +29,7 @@
       delegate_to: drive
       ansible.builtin.copy:
         src: "{{ item.0 }}"
-        dest: "/mnt/{{ item.1 }}.ssh.asc"
+        dest: "{{ destination }}/{{ item.1 }}.ssh.asc"
         remote_src: true
       with_items:
         - "{{ paths | zip(users) | list }}"
@@ -42,6 +46,6 @@
       delegate_to: drive
       ansible.builtin.copy:
         content: "{{ item.0 }}"
-        dest: "/mnt/{{ item.1 }}.gpg.asc"
+        dest: "{{ destination }}/{{ item.1 }}.gpg.asc"
       with_items:
         - "{{ bodycontent | json_query('results[].content') | zip(users) | list }}"
